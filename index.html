@@ -44,7 +44,7 @@
 <div id="map"></div>
 
 <script>
-  // Initialisation carte (centrée sur ta commune à modifier)
+  // Initialisation carte (centrée sur Ploufragan)
   var map = L.map('map').setView([48.4906, -2.7950], 13);
 
   // Fond de carte
@@ -78,11 +78,9 @@
   map.on('locationfound', onLocationFound);
   map.on('locationerror', onLocationError);
 
-  // ==========================
-  // 👉 AJOUT DE TES GEOJSON ICI
-  // ==========================
+ 
 
-  fetch("traces.geojson") // 🔁 remplace par ton fichier
+  fetch("traces.geojson")
     .then(res => res.json())
     .then(data => {
       L.geoJSON(data, {
