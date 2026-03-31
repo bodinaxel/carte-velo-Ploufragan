@@ -79,17 +79,32 @@
   map.on('locationerror', onLocationError);
 
   // Charger les traces cyclables
-  fetch("Traces_cyclable.geojson")
-    .then(res => res.json())
-    .then(data => {
-      L.geoJSON(data, {
-        style: {
-          color: "green",
-          weight: 4
+// Charger les traces cyclables
+fetch("Traces_cyclable.geojson")
+  .then(res => res.json())
+  .then(data => {
+    L.geoJSON(data, {
+      style: function(feature) {
+        let color = "green"; // couleur par défaut
+        
+        if (feature.properties["Type de tracé"] === "Voie verte") {
+          color = "green";
+        } else if (feature.properties["Type de tracé"] === "Piste cyclable") {
+          color = "blue";
+        } else if (feature.properties["Type de tracé"] === "Bande cyclable") {
+          color = "orange";
+        } else if (feature.properties["Type de tracé"] === "CVCB") {
+          color = "red";
         }
-      }).addTo(map);
-    })
-    .catch(err => console.log(err));
+        
+        return {
+          color: color,
+          weight: 4
+        };
+      }
+    }).addTo(map);
+  })
+  .catch(err => console.log(err));
 
 </script>
 
