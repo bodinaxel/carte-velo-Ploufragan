@@ -20,10 +20,24 @@
       background: white;
       padding: 40px;
       border-radius: 8px;
-      z-index: 9999; /* 🔥 important */
+      z-index: 9999;
       font-family: Arial;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
       text-align: center;
+    }
+
+    /* Croix */
+    #closeBtn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    #closeBtn:hover {
+      color: black;
     }
 
     button {
@@ -35,21 +49,18 @@
       cursor: pointer;
       font-size: 16px;
     }
-
-    .btn-refuser {
-      background: #dc3545;
-      margin-left: 10px;
-    }
   </style>
 </head>
 <body>
 
 <div id="info">
+  <div id="closeBtn">✖</div>
+
   <p style="font-size: 24px; margin: 20px 0;">
     📍 Autoriser la localisation pour voir votre position
   </p>
+
   <button id="btnActiver">Activer ma position</button>
-  <button id="btnRefuser" class="btn-refuser">Refuser</button>
 </div>
 
 <div id="map"></div>
@@ -65,14 +76,14 @@ document.addEventListener("DOMContentLoaded", function () {
     attribution: '&copy; OpenStreetMap'
   }).addTo(map);
 
-  // Boutons
+  // Bouton activer localisation
   document.getElementById("btnActiver").addEventListener("click", function() {
     map.locate({ setView: true, maxZoom: 16 });
   });
 
-  document.getElementById("btnRefuser").addEventListener("click", function() {
+  // Croix pour fermer
+  document.getElementById("closeBtn").addEventListener("click", function() {
     document.getElementById("info").style.display = "none";
-    map.setView([48.4906, -2.7950], 13);
   });
 
   // Position trouvée
@@ -93,9 +104,14 @@ document.addEventListener("DOMContentLoaded", function () {
   // Erreur localisation
   function onLocationError(e) {
     document.getElementById("info").innerHTML = `
+      <div id="closeBtn">✖</div>
       <p style="font-size: 20px;">❌ Localisation refusée ou indisponible</p>
       <button id="retry">Réessayer</button>
     `;
+
+    document.getElementById("closeBtn").addEventListener("click", function() {
+      document.getElementById("info").style.display = "none";
+    });
 
     document.getElementById("retry").addEventListener("click", function() {
       map.locate({ setView: true, maxZoom: 16 });
