@@ -1,0 +1,13 @@
+{
+"type": "FeatureCollection",
+"name": "lieuxnotables",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "fid": 1, "Nom du bâtiment": "Mairie" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -2.794550922108124, 48.488935628378918 ] ] } },
+{ "type": "Feature", "properties": { "fid": 2, "Nom du bâtiment": "Le Pollen" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -2.794256982654864, 48.489427296101901 ] ] } },
+{ "type": "Feature", "properties": { "fid": 3, "Nom du bâtiment": "Espace Victor Hugo" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -2.793457747284332, 48.488704635670729 ] ] } },
+{ "type": "Feature", "properties": { "fid": 4, "Nom du bâtiment": "Centre Technique Municipal" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -2.80096440103592, 48.492883678404617 ] ] } },
+{ "type": "Feature", "properties": { "fid": 5, "Nom du bâtiment": "Le Tremplin" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -2.796448931149173, 48.489794652270234 ] ] } },
+{ "type": "Feature", "properties": { "fid": 6, "Nom du bâtiment": "EHPAD" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -2.795921239844986, 48.488342373902952 ] ] } }
+]
+}
