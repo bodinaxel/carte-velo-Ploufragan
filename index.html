@@ -160,19 +160,62 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch(err => console.log(err));
 
+  // Couleurs des lieux notables
+  var lieuxColors = {
+    "Mairie": "#e74c3c",
+    "Le Pollen": "#3498db",
+    "Espace Victor Hugo": "#f1c40f",
+    "Centre Technique Municipal": "#27ae60",
+    "Le Tremplin": "#e67e22",
+    "EHPAD": "#9b59b6"
+  };
+  var defaultLieuColor = "#555555";
+
+  // Charger les lieux notables
+  fetch("lieuxnotables.geojson")
+    .then(res => res.json())
+    .then(data => {
+      L.geoJSON(data, {
+        pointToLayer: function(feature, latlng) {
+          var nom = feature.properties["Nom du bâtiment"];
+          var color = lieuxColors[nom] || defaultLieuColor;
+          return L.circleMarker(latlng, {
+            radius: 10,
+            fillColor: color,
+            color: "#ffffff",
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.9
+          });
+        },
+        onEachFeature: function(feature, layer) {
+          var nom = feature.properties["Nom du bâtiment"];
+          if (nom) {
+            layer.bindPopup("<b>" + nom + "</b>");
+          }
+        }
+      }).addTo(map);
+    })
+    .catch(err => console.log(err));
+
   // Légende en haut à droite
   var legend = L.control({ position: "topright" });
 
   legend.onAdd = function (map) {
     var div = L.DomUtil.create("div", "info legend");
 
+    var lieuxItems = Object.entries(lieuxColors).map(function(entry) {
+      return '<div><span style="background:' + entry[1] + ';width:14px;height:14px;display:inline-block;margin-right:8px;border-radius:50%;vertical-align:middle;"></span>' + entry[0] + '</div>';
+    }).join('');
+
     div.innerHTML = `
-      <h4>Légende</h4>
-      <div><span style="background:green;width:25px;height:25px;display:inline-block;margin-right:8px;"></span>Voie verte</div>
-      <div><span style="background:blue;width:25px;height:25px;display:inline-block;margin-right:8px;"></span>Piste cyclable</div>
-      <div><span style="background:orange;width:25px;height:25px;display:inline-block;margin-right:8px;"></span>Bande cyclable</div>
-      <div><span style="background:red;width:25px;height:25px;display:inline-block;margin-right:8px;"></span>Chaucidou</div>
-    `;
+      <h4>Tracés cyclables</h4>
+      <div><span style="background:green;width:25px;height:4px;display:inline-block;margin-right:8px;vertical-align:middle;"></span>Voie verte</div>
+      <div><span style="background:blue;width:25px;height:4px;display:inline-block;margin-right:8px;vertical-align:middle;"></span>Piste cyclable</div>
+      <div><span style="background:orange;width:25px;height:4px;display:inline-block;margin-right:8px;vertical-align:middle;"></span>Bande cyclable</div>
+      <div><span style="background:red;width:25px;height:4px;display:inline-block;margin-right:8px;vertical-align:middle;"></span>Chaucidou</div>
+      <h4 style="margin-top:8px;">Lieux notables</h4>
+    ` + lieuxItems;
 
     return div;
   };
