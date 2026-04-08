@@ -158,31 +158,27 @@ document.addEventListener("DOMContentLoaded", function () {
   // -------------------------
   // LIEUX NOTABLES
   // -------------------------
-  const couleurs = {
-    "Centre Technique Municipal": "gray",
-    "EPHAD": "red",
-    "Mairie": "blue",
-    "Le Tremplin": "orange",
-    "Espace Victor Hugo": "purple",
-    "Le Pollen": "green"
-  };
-
   fetch("lieuxnotables.geojson")
     .then(res => res.json())
     .then(data => {
 
       L.geoJSON(data, {
-        pointToLayer: function(feature, latlng) {
-          let nom = feature.properties.nom;
+        style: function(feature) {
+          let lieuxnotables = feature.properties["Nom du bâtiment"];
+          let color = "purple";
 
-          return L.circleMarker(latlng, {
-            radius: 7,
-            fillColor: couleurs[nom] || "black",
-            color: "#000",
-            weight: 1,
-            fillOpacity: 0.9
-          });
-        },
+          if (typeTrace === "EPHAD") color = "green";
+          else if (typeTrace === "Le Pollen") color = "blue";
+          else if (typeTrace === "Mairie") color = "orange";
+          else if (typeTrace === "Centre Technique Municipal") color = "red";
+         else if (typeTrace === "Le Tremplin") color = "yellow";
+          return {
+            color: color,
+            weight: 4
+          };
+        }
+      }).addTo(map);
+    })
 
         onEachFeature: function(feature, layer) {
           if (feature.properties.nom) {
