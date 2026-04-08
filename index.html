@@ -26,7 +26,6 @@
       text-align: center;
     }
 
-    /* Croix */
     #closeBtn {
       position: absolute;
       top: 10px;
@@ -50,7 +49,6 @@
       font-size: 16px;
     }
 
-    /* Légende */
     .info.legend {
       background: white;
       padding: 10px 15px;
@@ -62,11 +60,12 @@
     }
 
     .info.legend h4 {
-      margin: 0 0 5px;
+      margin: 5px 0;
       font-size: 16px;
     }
   </style>
 </head>
+
 <body>
 
 <div id="info">
@@ -84,25 +83,20 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-  // Initialisation carte
   var map = L.map('map').setView([48.4906, -2.7950], 13);
 
-  // Fond de carte
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap'
   }).addTo(map);
 
-  // Bouton activer localisation
   document.getElementById("btnActiver").addEventListener("click", function() {
     map.locate({ setView: true, maxZoom: 16 });
   });
 
-  // Croix pour fermer
   document.getElementById("closeBtn").addEventListener("click", function() {
     document.getElementById("info").style.display = "none";
   });
 
-  // Position trouvée
   function onLocationFound(e) {
     L.marker(e.latlng).addTo(map)
       .bindPopup("Vous êtes ici 🚴‍♂️")
@@ -117,7 +111,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("info").style.display = "none";
   }
 
-  // Erreur localisation
   function onLocationError(e) {
     document.getElementById("info").innerHTML = `
       <div id="closeBtn">✖</div>
@@ -137,7 +130,9 @@ document.addEventListener("DOMContentLoaded", function () {
   map.on('locationfound', onLocationFound);
   map.on('locationerror', onLocationError);
 
-  // Charger les traces cyclables
+  // -------------------------
+  // TRACES CYCLABLES
+  // -------------------------
   fetch("Traces_cyclable.geojson")
     .then(res => res.json())
     .then(data => {
@@ -145,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
         style: function(feature) {
           let typeTrace = feature.properties["Type de tracé"];
           let color = "green";
-          
+
           if (typeTrace === "Voie verte") color = "green";
           else if (typeTrace === "Piste cyclable") color = "blue";
           else if (typeTrace === "Bande cyclable") color = "orange";
@@ -160,18 +155,70 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch(err => console.log(err));
 
-  // Légende en haut à droite
+  // -------------------------
+  // LIEUX NOTABLES
+  // -------------------------
+  const couleurs = {
+    "Centre Technique Municipal": "gray",
+    "EPHAD": "red",
+    "Mairie": "blue",
+    "Le Tremplin": "orange",
+    "Espace Victor Hugo": "purple",
+    "Le Pollen": "green"
+  };
+
+  fetch("lieuxnotables.geojson")
+    .then(res => res.json())
+    .then(data => {
+
+      L.geoJSON(data, {
+        pointToLayer: function(feature, latlng) {
+          let nom = feature.properties.nom;
+
+          return L.circleMarker(latlng, {
+            radius: 7,
+            fillColor: couleurs[nom] || "black",
+            color: "#000",
+            weight: 1,
+            fillOpacity: 0.9
+          });
+        },
+
+        onEachFeature: function(feature, layer) {
+          if (feature.properties.nom) {
+            layer.bindPopup(feature.properties.nom);
+          }
+        }
+
+      }).addTo(map);
+
+    })
+    .catch(err => console.log(err));
+
+  // -------------------------
+  // LEGENDE
+  // -------------------------
   var legend = L.control({ position: "topright" });
 
-  legend.onAdd = function (map) {
+  legend.onAdd = function () {
     var div = L.DomUtil.create("div", "info legend");
 
     div.innerHTML = `
-      <h4>Légende</h4>
+      <h4>Voies cyclables</h4>
       <div><span style="background:green;width:25px;height:25px;display:inline-block;margin-right:8px;"></span>Voie verte</div>
       <div><span style="background:blue;width:25px;height:25px;display:inline-block;margin-right:8px;"></span>Piste cyclable</div>
       <div><span style="background:orange;width:25px;height:25px;display:inline-block;margin-right:8px;"></span>Bande cyclable</div>
       <div><span style="background:red;width:25px;height:25px;display:inline-block;margin-right:8px;"></span>Chaucidou</div>
+
+      <hr>
+
+      <h4>Lieux notables</h4>
+      <div><span style="background:gray;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Centre Technique Municipal</div>
+      <div><span style="background:red;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>EPHAD</div>
+      <div><span style="background:blue;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Mairie</div>
+      <div><span style="background:orange;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Le Tremplin</div>
+      <div><span style="background:purple;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Espace Victor Hugo</div>
+      <div><span style="background:green;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Le Pollen</div>
     `;
 
     return div;
@@ -181,6 +228,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
