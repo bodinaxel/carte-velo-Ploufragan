@@ -163,6 +163,8 @@ fetch("lieuxnotables.geojson")
   .then(data => {
 
     function getColor(nom) {
+      if (!nom) return "black"; // 🔥 évite le crash
+
       nom = nom.toLowerCase().trim();
 
       if (nom === "EHPAD") return "green";
@@ -177,7 +179,8 @@ fetch("lieuxnotables.geojson")
     L.geoJSON(data, {
 
       pointToLayer: function(feature, latlng) {
-        let nom = feature.properties["Nom du bâtiment"];
+
+        let nom = feature.properties["Nom du bâtiment"] || "";
 
         return L.circleMarker(latlng, {
           radius: 7,
@@ -190,8 +193,11 @@ fetch("lieuxnotables.geojson")
 
       onEachFeature: function(feature, layer) {
         let nom = feature.properties["Nom du bâtiment"];
+
         if (nom) {
           layer.bindPopup(nom);
+        } else {
+          layer.bindPopup("Lieu inconnu");
         }
       }
 
@@ -199,6 +205,7 @@ fetch("lieuxnotables.geojson")
 
   })
   .catch(err => console.log(err));
+🔍 Pourquoi ça marche m
   // -------------------------
   // LEGENDE
   // -------------------------
